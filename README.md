@@ -39,7 +39,7 @@ See `Milight::V6::All` and `Milight::V6::Zone` for all supported commands.
 
 A command line tool is included which can be used to control the lights.
 
-Usage: milight <host> <command> [zone]
+Usage: milight &lt;host&gt; &lt;command&gt; [zone]
 
 Supported commands: on, off, link, unlink
 
