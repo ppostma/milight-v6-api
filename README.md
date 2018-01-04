@@ -1,5 +1,8 @@
 # Milight Wifi Bridge v6 Ruby API
 
+[![Gem Version](https://badge.fury.io/rb/milight-v6.svg)](https://badge.fury.io/rb/milight-v6)
+[![Build Status](https://travis-ci.org/ppostma/milight-v6-api.svg?branch=master)](https://travis-ci.org/ppostma/milight-v6-api)
+
 This gem provides a Ruby API for the Milight Wifi Bridge (or Wifi iBOX controller) version 6.
 
 ## Installation
