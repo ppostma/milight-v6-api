@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "milight/v6"
+
+if ARGV.length < 2
+  puts "Usage: #{$PROGRAM_NAME} <host> <command> [zone]"
+  exit 1
+end
+
+host = ARGV.shift
+command = ARGV.shift
+zone = ARGV.shift
+
+controller = Milight::V6::Controller.new(host)
+
+if zone.nil?
+  lights = controller.all
+else
+  lights = controller.zone(zone.to_i)
+end
+
+case command
+when "link"
+  lights.link
+when "unlink"
+  lights.unlink
+when "off"
+  lights.off
+when "on"
+  lights.on
+end
