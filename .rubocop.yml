@@ -4,6 +4,7 @@ AllCops:
   DisplayStyleGuide: true
   Exclude:
     - 'lib/milight/v6/api/version.rb'
+    - 'vendor/**/*'
 
 Metrics/BlockLength:
   Exclude:
