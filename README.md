@@ -30,9 +30,9 @@ require "milight/v6"
 controller = Milight::V6::Controller.new("192.168.178.33")
 controller.zone(1).on
 
-controller.zone(2).on.brightness(70).warm_light
+controller.zone(2).warm_light.brightness(70).on
 
-controller.zone(3).on.saturation(80).hue(Milight::V6::Color::BLUE)
+controller.zone(3).hue(Milight::V6::Color::BLUE).saturation(10).on
 
 controller.all.off
 ```
