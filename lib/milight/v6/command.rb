@@ -5,7 +5,7 @@ require "milight/v6/socket"
 
 module Milight
   module V6
-    # see http://www.limitlessled.com/dev/
+    # see https://github.com/Fantasmos/LimitlessLED-DevAPI
     class Command
       def initialize(host, port = 5987)
         @socket = Milight::V6::Socket.new(host, port)
