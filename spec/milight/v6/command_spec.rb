@@ -24,6 +24,12 @@ RSpec.describe Milight::V6::Command do
       )
       subject.execute(1, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
     end
+
+    it "raises an exception when the session could not be established" do
+      allow(socket).to receive(:receive_bytes).and_return(false)
+
+      expect { subject.execute(-1, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]) }.to raise_error Milight::V6::Exception
+    end
   end
 
   describe "#execute" do

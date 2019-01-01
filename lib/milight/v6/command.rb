@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "milight/v6/exception"
 require "milight/v6/socket"
 
 module Milight
@@ -82,6 +83,8 @@ module Milight
 
         @socket.send_bytes(request)
         response = @socket.receive_bytes
+
+        raise Exception, "Could not establish session with Wifi bridge." unless response
 
         @session_id1 = response[19]
         @session_id2 = response[20]
