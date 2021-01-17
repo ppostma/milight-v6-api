@@ -1,32 +1,199 @@
-#!/usr/bin/env ruby
+#!/usr/lib/env ruby
 # frozen_string_literal: true
 
 require "milight/v6"
+require "optparse"
+require "ipaddress"
 
-if ARGV.length < 2
-  puts "Usage: #{$PROGRAM_NAME} <host> <command> [zone]"
-  exit 1
+# env
+colors = %w[RED LAVENDER BLUE AQUA GREEN LIME YELLOW ORANGE].freeze
+min_zone = 1
+max_zone = 4
+zone_range = "#{min_zone}-#{max_zone}"
+default_port = 5987
+invalid_zone_msg = "zone must be between #{zone_range}"
+
+# helpers
+def valid_zone?(zone, min, max)
+  zone >= min && zone <= max
 end
 
-host = ARGV.shift
-command = ARGV.shift
-zone = ARGV.shift
-
-controller = Milight::V6::Controller.new(host)
-
-if zone.nil?
-  lights = controller.all
-else
-  lights = controller.zone(zone.to_i)
+def refresh_all_zones(zones)
+  send_command(zones) { zones.off }
+  send_command(zones) { zones.on }
 end
 
-case command
-when "link"
-  lights.link
-when "unlink"
-  lights.unlink
-when "off"
-  lights.off
-when "on"
-  lights.on
+# rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+def update_zones(zones, options)
+  send_command(zones) { zones.on } if options[:on]
+  send_command(zones) { zones.off } if options[:off]
+  send_command(zones) { zones.night_light } if options[:night]
+  send_command(zones) { zones.brightness(options[:brightness]) } if options[:brightness]
+  send_command(zones) { zones.temperature(options[:temperature]) } if options[:temperature]
+  send_command(zones) { zones.warm_light } if options[:warm]
+  send_command(zones) { zones.white_light } if options[:white]
+  send_command(zones) { zones.hue(options[:hue]) } if options[:hue]
+  send_command(zones) { zones.hue(options[:color]) } if options[:color]
+  send_command(zones) { zones.saturation(options[:saturation]) } if options[:saturation]
 end
+# rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity,  Metrics/PerceivedComplexity
+
+# rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+def update_zone(zone, options)
+  send_command(zone) { zone.link } if options[:link]
+  send_command(zone) { zone.unlink } if options[:unlink]
+  send_command(zone) { zone.on } if options[:on]
+  send_command(zone) { zone.off } if options[:off]
+  send_command(zone) { zone.night_light } if options[:night]
+  send_command(zone) { zone.brightness(options[:brightness]) } if options[:brightness]
+  send_command(zone) { zone.temperature(options[:temperature]) } if options[:temperature]
+  send_command(zone) { zone.warm_light } if options[:warm]
+  send_command(zone) { zone.white_light } if options[:white]
+  send_command(zone) { zone.hue(options[:hue]) } if options[:hue]
+  send_command(zone) { zone.hue(options[:color]) } if options[:color]
+  send_command(zone) { zone.saturation(options[:saturation]) } if options[:saturation]
+end
+# rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity,  Metrics/PerceivedComplexity, Metrics/MethodLength
+
+# multiple commands seem to fail when invoked in quick succession,
+# so this function invokes a command (passed in via a block)
+# and then waits a short while
+def send_command(zone)
+  yield
+  zone.wait(0.2)
+end
+
+def valid_color?(color, colors)
+  colors.any? color
+end
+
+def assert_not_combined(options, keys)
+  raise "can't combine options #{keys}" unless keys.map { |k| options.key?(k) }.filter { |e| e }.length <= 1
+end
+
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+def hex_color(value, colors)
+  case value
+  when colors[0]
+    Milight::V6::Color::RED
+  when colors[1]
+    Milight::V6::Color::LAVENDER
+  when colors[2]
+    Milight::V6::Color::BLUE
+  when colors[3]
+    Milight::V6::Color::AQUA
+  when colors[4]
+    Milight::V6::Color::GREEN
+  when colors[5]
+    Milight::V6::Color::LIME
+  when colors[6]
+    Milight::V6::Color::YELLOW
+  when colors[7]
+    Milight::V6::Color::ORANGE
+  else
+    raise "unhandled color #{value}"
+  end
+end
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+# parse options
+# rubocop:disable Metrics/BlockLength
+options = {}
+usage = "Usage: milight [options]\n"
+OptionParser.new(usage) do |opt|
+  opt.on("-x", "--host HOST", String, "ip address of milight") do |o|
+    raise "invalid host #{o}" unless IPAddress.valid?(o)
+    options[:host] = o
+  end
+  opt.on("-p", "--port PORT", Integer, "port number. defaults to #{default_port}") do |o|
+    options[:port] = o
+  end
+  opt.on("-a", "--all", "all zones") do |o|
+    options[:all] = o
+  end
+  opt.on("-z", "--zone ZONE", Integer, "specific zone. #{zone_range}") do |o|
+    raise invalid_zone_msg unless valid_zone?(o, min_zone, max_zone)
+    options[:zone] = o
+  end
+  opt.on("-g", "--zones ZONES", Array, "group of zones. #{zone_range},#{zone_range}...") do |o|
+    options[:zones] = o.map do |e|
+      zone = begin
+               Integer(e)
+             rescue StandardError
+               -1
+             end
+      raise invalid_zone_msg unless valid_zone?(zone, min_zone, max_zone)
+      zone
+    end.uniq
+  end
+  opt.on("-l", "--link", "link/sync light bulbs") do |o|
+    options[:link] = o
+  end
+  opt.on("-u", "--unlink", "unlink/clear light bulbs") do |o|
+    options[:unlink] = o
+  end
+  opt.on("-o", "--on", "turn on") do |o|
+    options[:on] = o
+  end
+  opt.on("-i", "--off", "turn off") do |o|
+    options[:off] = o
+  end
+  opt.on("-b", "--brightness BRIGHTNESS", Integer, "set brightness. 0 = 0%, 100 = 100%") do |o|
+    options[:brightness] = o
+  end
+  opt.on("-t", "--temperature TEMPERATURE", Integer, "set temperature. 0 = 2700K, 100 = 6500K") do |o|
+    options[:temperature] = o
+  end
+  opt.on("-m", "--warm", "set warm light. 2700K") do |o|
+    options[:warm] = o
+  end
+  opt.on("-w", "--white", "set white light. 6500K") do |o|
+    options[:white] = o
+  end
+  opt.on("-n", "--night", "set night light") do |o|
+    options[:night] = o
+  end
+  opt.on("-e", "--hue HUE", Integer, "set hue. 0 to 255 (red)") do |o|
+    options[:hue] = o
+  end
+  opt.on("-c", "--color COLOR", String, "set color. #{colors}") do |o|
+    raise "color can only be #{colors}" unless valid_color?(o, colors)
+    options[:color] = hex_color(o, colors)
+  end
+  opt.on("-s", "--saturation SATURATION", Integer, "set saturation. 0 = 0%, 100 = 100%") do |o|
+    options[:saturation] = o
+  end
+  opt.on("-v", "--version", "display the version number") do
+    puts "milight #{Milight::V6::VERSION}"
+    exit 0
+  end
+  opt.on("-r", "--refresh", "use if the lights get stuck") do |o|
+    options[:refresh] = o
+  end
+end.parse!
+# rubocop:enable Metrics/BlockLength
+
+# set default options
+options[:port] = default_port if options[:port].nil?
+
+# validate required options
+raise "no milight ip provided (e.g. 192.168.1.XX)" if options[:host].nil?
+raise "no light(s) selected. run with --help to see options" if options[:all].nil? && options[:zone].nil? && options[:zones].nil?
+
+# validate option combination
+assert_not_combined(options, %i[on off])
+assert_not_combined(options, %i[all zone zones])
+assert_not_combined(options, %i[all link])
+assert_not_combined(options, %i[all unlink])
+assert_not_combined(options, %i[link unlink])
+assert_not_combined(options, %i[night white warm temperature color hue])
+assert_not_combined(options, %i[night saturation])
+assert_not_combined(options, %i[night brightness])
+
+# main
+puts "starting with options #{options}"
+controller = Milight::V6::Controller.new(options[:host], options[:port])
+refresh_all_zones(controller.all) if options[:refresh]
+update_zones(controller.all, options) if options[:all]
+update_zone(controller.zone(options[:zone]), options) if options[:zone]
+options[:zones]&.each { |z| handle_zone(controller.zone(z), options) }
