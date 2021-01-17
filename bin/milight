@@ -196,4 +196,4 @@ controller = Milight::V6::Controller.new(options[:host], options[:port])
 refresh_all_zones(controller.all) if options[:refresh]
 update_zones(controller.all, options) if options[:all]
 update_zone(controller.zone(options[:zone]), options) if options[:zone]
-options[:zones]&.each { |z| handle_zone(controller.zone(z), options) }
+options[:zones]&.each { |z| update_zone(controller.zone(z), options) }
