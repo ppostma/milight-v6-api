@@ -90,7 +90,7 @@ To test your changes to the command line tool:
 
 ```bash
 gem build milight-v6.gemspec
-gem install ./milight-v6-0.1.1.gem
+gem install ./milight-v6-0.2.0.gem
 milight <OPTIONS>
 ```
 
