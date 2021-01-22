@@ -7,7 +7,7 @@ module Milight
   module V6
     # see https://github.com/Fantasmos/LimitlessLED-DevAPI
     class Command
-      def initialize(host, port = 5987)
+      def initialize(host, port)
         @socket = Milight::V6::Socket.new(host, port)
 
         bridge_session
@@ -84,7 +84,7 @@ module Milight
         @socket.send_bytes(request)
         response = @socket.receive_bytes
 
-        raise Exception, "Could not establish session with Wifi bridge." unless response
+        raise Exception, "Could not establish session with Wifi bridge." if response.nil?
 
         @session_id1 = response[19]
         @session_id2 = response[20]

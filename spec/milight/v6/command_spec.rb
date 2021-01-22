@@ -14,7 +14,7 @@ RSpec.describe Milight::V6::Command do
     )
   end
 
-  subject { Milight::V6::Command.new("127.0.0.1") }
+  subject { Milight::V6::Command.new("127.0.0.1", 5987) }
 
   describe "session" do
     it "sends the bridge session command" do
@@ -26,7 +26,7 @@ RSpec.describe Milight::V6::Command do
     end
 
     it "raises an exception when the session could not be established" do
-      allow(socket).to receive(:receive_bytes).and_return(false)
+      allow(socket).to receive(:receive_bytes).and_return(nil)
 
       expect { subject.execute(-1, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]) }.to raise_error Milight::V6::Exception
     end

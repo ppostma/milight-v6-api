@@ -7,7 +7,7 @@ require "milight/v6/zone"
 module Milight
   module V6
     class Controller
-      def initialize(host, port = 5987)
+      def initialize(host = "<broadcast>", port = 5987)
         @command = Milight::V6::Command.new(host, port)
       end
 

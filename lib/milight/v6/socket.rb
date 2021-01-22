@@ -9,37 +9,54 @@ module Milight
       READ_TIMEOUT = 5
 
       def initialize(host, port)
-        @socket = UDPSocket.new
-        @socket.connect(host, port)
-
-        @logger = Logger.new(STDOUT)
-        @logger.level = Logger::INFO if ENV["MILIGHT_DEBUG"] != "1"
+        @host = host
+        @port = port
       end
 
       def send_bytes(bytes)
-        @logger.debug("Sending: #{format_bytes_as_hex(bytes)}")
+        logger.debug("Sending: #{format_bytes_as_hex(bytes)}")
 
-        @socket.send(bytes.pack('C*'), 0)
+        socket.send(bytes.pack('C*'), 0, @host, @port)
       end
 
       def receive_bytes
-        response = @socket.recvfrom_nonblock(128).first
+        response = socket.recvfrom_nonblock(128).first
         bytes = response.unpack('C*')
 
-        @logger.debug("Received: #{format_bytes_as_hex(bytes)}")
+        logger.debug("Received: #{format_bytes_as_hex(bytes)}")
 
         bytes
       rescue IO::WaitReadable
-        ready = IO.select([@socket], nil, nil, READ_TIMEOUT)
+        ready = IO.select([socket], nil, nil, READ_TIMEOUT)
         retry if ready
 
-        return false
+        return nil
       end
 
       private
 
+      def socket
+        @socket ||= begin
+          socket = UDPSocket.new
+
+          if @host == "<broadcast>" || @host == "255.255.255.255"
+            socket.setsockopt(::Socket::SOL_SOCKET, ::Socket::SO_BROADCAST, true)
+          end
+
+          socket
+        end
+      end
+
+      def logger
+        @logger ||= begin
+          logger = Logger.new(STDOUT)
+          logger.level = Logger::INFO if ENV["MILIGHT_DEBUG"] != "1"
+          logger
+        end
+      end
+
       def format_bytes_as_hex(bytes)
-        bytes.map { |s| format("0x%02X", s) }
+        bytes.map { |s| format("0x%02X", s) }.join(", ")
       end
     end
   end
