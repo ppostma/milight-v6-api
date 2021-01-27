@@ -14,7 +14,7 @@ if host == "search"
     puts "No Mi-Light devices found."
   end
 else
-  if ARGV.length < 1
+  if ARGV.empty?
     puts "Usage: #{$PROGRAM_NAME} <host> <command> [zone]"
     puts "       #{$PROGRAM_NAME} search"
     exit 1
