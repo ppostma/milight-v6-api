@@ -4,7 +4,10 @@
 [![Build Status](https://travis-ci.org/ppostma/milight-v6-api.svg?branch=master)](https://travis-ci.org/ppostma/milight-v6-api)
 [![Code Climate](https://codeclimate.com/github/ppostma/milight-v6-api/badges/gpa.svg)](https://codeclimate.com/github/ppostma/milight-v6-api)
 
-This gem provides a Ruby API for the Milight Wifi Bridge (or Wifi iBOX controller) version 6.
+This gem provides a Ruby API for the Mi-Light Wifi Bridge using protocol version 6.
+
+Supported devices are the Mi-Light WiFi iBox models 1 and 2. The [esp8266_milight_hub](https://github.com/sidoh/esp8266_milight_hub) should also work, but I haven't tested this yet.
+The bridges sold under the brand MiBoxer (such as model WL-Box1) are not supported by this gem.
 
 ## Installation
 
