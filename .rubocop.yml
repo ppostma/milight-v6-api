@@ -1,9 +1,8 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
   DisplayCopNames: true
   DisplayStyleGuide: true
   Exclude:
-    - 'lib/milight/v6/api/version.rb'
     - 'vendor/**/*'
 
 Metrics/BlockLength:
@@ -11,6 +10,9 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
 
 Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
   Enabled: false
 
 Style/ConditionalAssignment:

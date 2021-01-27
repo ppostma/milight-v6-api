@@ -3,18 +3,20 @@
 require "spec_helper"
 
 RSpec.describe Milight::V6::Command do
-  let(:socket) { double(Milight::V6::Socket) }
+  let(:socket) { double(Milight::V6::Socket, host: "127.0.0.1", port: 5987) }
 
   before do
     allow(Milight::V6::Socket).to receive(:new).and_return(socket)
     allow(socket).to receive(:send_bytes)
     allow(socket).to receive(:receive_bytes).and_return(
-      [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x20, 0x00]
+      [
+        [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x20, 0x00]
+      ], "127.0.0.1"
     )
   end
 
-  subject { Milight::V6::Command.new("127.0.0.1", 5987) }
+  subject { Milight::V6::Command.new(socket) }
 
   describe "session" do
     it "sends the bridge session command" do
@@ -28,7 +30,7 @@ RSpec.describe Milight::V6::Command do
     it "raises an exception when the session could not be established" do
       allow(socket).to receive(:receive_bytes).and_return(nil)
 
-      expect { subject.execute(-1, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]) }.to raise_error Milight::V6::Exception
+      expect { subject.execute(1, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]) }.to raise_error Milight::V6::Exception
     end
   end
 

@@ -8,6 +8,8 @@ module Milight
     class Socket
       READ_TIMEOUT = 5
 
+      attr_reader :host, :port
+
       def initialize(host, port)
         @host = host
         @port = port
@@ -20,17 +22,21 @@ module Milight
       end
 
       def receive_bytes
-        response = socket.recvfrom_nonblock(128).first
+        response, address = socket.recvfrom_nonblock(128)
         bytes = response.unpack('C*')
 
         logger.debug("Received: #{format_bytes_as_hex(bytes)}")
 
-        bytes
+        [bytes, address.last]
       rescue IO::WaitReadable
         ready = IO.select([socket], nil, nil, READ_TIMEOUT)
         retry if ready
 
         return nil
+      end
+
+      def close
+        socket.close
       end
 
       private
