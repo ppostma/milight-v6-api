@@ -5,6 +5,7 @@ require "socket"
 
 module Milight
   module V6
+    # Send and receive UDP packets.
     class Socket
       READ_TIMEOUT = 5
 

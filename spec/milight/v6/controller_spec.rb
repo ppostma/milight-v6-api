@@ -20,4 +20,10 @@ RSpec.describe Milight::V6::Controller do
       expect(subject.zone(1)).to be_instance_of(Milight::V6::Zone)
     end
   end
+
+  describe "#bridge" do
+    it "returns an instance of type Milight::V6::Bridge" do
+      expect(subject.bridge).to be_instance_of(Milight::V6::Bridge)
+    end
+  end
 end

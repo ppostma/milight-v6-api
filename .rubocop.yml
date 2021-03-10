@@ -18,9 +18,6 @@ Metrics/MethodLength:
 Style/ConditionalAssignment:
   Enabled: false
 
-Style/Documentation:
-  Enabled: false
-
 Style/For:
   Enabled: false
 

@@ -11,50 +11,6 @@ module Milight
         @socket = socket
       end
 
-      def link(zone_id)
-        execute(zone_id, [0x3D, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00])
-      end
-
-      def unlink(zone_id)
-        execute(zone_id, [0x3E, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00])
-      end
-
-      def on(zone_id)
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x04, 0x01, 0x00, 0x00, 0x00])
-      end
-
-      def off(zone_id)
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x04, 0x02, 0x00, 0x00, 0x00])
-      end
-
-      def night_light(zone_id)
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x04, 0x05, 0x00, 0x00, 0x00])
-      end
-
-      def brightness(zone_id, value)
-        raise ArgumentError, "Please supply a brightness value between 0-100." if value.negative? || value > 100
-
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x03, value, 0x00, 0x00, 0x00])
-      end
-
-      def temperature(zone_id, value)
-        raise ArgumentError, "Please supply a temperature value between 0-100 (2700K to 6500K)." if value.negative? || value > 100
-
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x05, value, 0x00, 0x00, 0x00])
-      end
-
-      def hue(zone_id, value)
-        raise ArgumentError, "Please supply a hue value between 0-255." if value.negative? || value > 255
-
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x01, value, value, value, value])
-      end
-
-      def saturation(zone_id, value)
-        raise ArgumentError, "Please supply a saturation value between 0-100." if value.negative? || value > 100
-
-        execute(zone_id, [0x31, 0x00, 0x00, 0x08, 0x02, value, 0x00, 0x00, 0x00])
-      end
-
       def execute(zone_id, command)
         raise ArgumentError, "Please supply a zone ID between 1-4." if zone_id.negative? || zone_id > 4
 

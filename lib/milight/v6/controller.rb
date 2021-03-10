@@ -3,10 +3,12 @@
 require "milight/v6/command"
 require "milight/v6/discover"
 require "milight/v6/all"
+require "milight/v6/bridge"
 require "milight/v6/zone"
 
 module Milight
   module V6
+    # Controller for the Mi-Light WiFi iBox.
     class Controller
       extend Milight::V6::Discover
 
@@ -23,6 +25,11 @@ module Milight
       # Select a specific zone.
       def zone(zone_id)
         Milight::V6::Zone.new(@command, zone_id)
+      end
+
+      # Select the bridge lamp.
+      def bridge
+        Milight::V6::Bridge.new(@command)
       end
 
       def to_s
