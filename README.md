@@ -27,20 +27,36 @@ Or install it yourself as:
 
 ## Usage
 
+### Connecting to a Mi-Light controller
+
+Connect to a Mi-Light controller by creating an instance of `Milight::V6::Controller` and supplying the IP address of the Mi-Light Wifi Bridge. If you don't know the IP address, you can use the class method `search` to discover devices on the local network.
+
 ```ruby
 require "milight/v6"
 
 controller = Milight::V6::Controller.new("192.168.178.33")
+
+controllers = Milight::V6::Controller.search
+```
+
+### Sending commands
+
+First select what you want control: the bridge lamp, a specific zone or all zones. Then you can start sending commands. See [Milight::V6::All](lib/milight/v6/all.rb), [Milight::V6::Bridge](lib/milight/v6/bridge.rb) and [Milight::V6::Zone](lib/milight/v6/zone.rb) for the supported commands.
+
+Some examples:
+
+```ruby
 controller.zone(1).on
 
 controller.zone(2).warm_light.brightness(70).on
 
 controller.zone(3).hue(Milight::V6::Color::BLUE).saturation(10).on
 
+controller.bridge.on
+controller.bridge.brightness(50)
+
 controller.all.off
 ```
-
-See `Milight::V6::All` and `Milight::V6::Zone` for all supported commands.
 
 ## Command line
 
@@ -48,9 +64,12 @@ A command line tool is included which can be used to control the lights.
 
 Usage: milight &lt;host&gt; &lt;command&gt; [zone]
 
-Supported commands: on, off, link, unlink
+Supported commands: search on, off, link, unlink
+
+Examples:
 
 ```bash
+$ milight search               # search for devices
 $ milight 192.168.178.33 on 1  # turn on lights for zone 1
 $ milight 192.168.178.33 off   # turn off lights for all zones
 ```
