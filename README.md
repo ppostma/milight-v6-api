@@ -64,7 +64,7 @@ A command line tool is included which can be used to control the lights.
 
 Usage: milight &lt;host&gt; &lt;command&gt; [zone]
 
-Supported commands: search on, off, link, unlink
+Supported commands: search, on, off, link, unlink
 
 Examples:
 

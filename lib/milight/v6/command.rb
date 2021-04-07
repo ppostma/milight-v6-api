@@ -7,8 +7,12 @@ module Milight
   module V6
     # see https://github.com/Fantasmos/LimitlessLED-DevAPI
     class Command
-      def initialize(socket)
+      attr_accessor :wait
+
+      def initialize(socket, wait:)
         @socket = socket
+        @wait = wait
+        @last_time = 0
       end
 
       def execute(zone_id, command)
@@ -25,8 +29,7 @@ module Milight
         request << 0x00
         request << calculate_checksum(request)
 
-        @socket.send_bytes(request)
-        @socket.receive_bytes
+        send_delayed(request)
       end
 
       private
@@ -43,6 +46,8 @@ module Milight
         response, _address = @socket.receive_bytes
 
         raise Exception, "Could not establish session with Wifi bridge." if response.nil?
+
+        record_last_time
 
         @session_id1 = response[19]
         @session_id2 = response[20]
@@ -63,6 +68,33 @@ module Milight
         end
 
         checksum & 0xFF
+      end
+
+      # Delay execution of commands to prevent commands being dropped by the controller.
+      def send_delayed(request)
+        delay_command
+
+        @socket.send_bytes(request)
+        @socket.receive_bytes
+
+        record_last_time
+      end
+
+      def delay_command
+        return unless @wait
+
+        interval = current_time - @last_time
+        sleep(@wait - interval) if interval < @wait
+      end
+
+      def record_last_time
+        return unless @wait
+
+        @last_time = current_time
+      end
+
+      def current_time
+        Process.clock_gettime(Process::CLOCK_MONOTONIC)
       end
     end
   end

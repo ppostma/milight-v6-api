@@ -16,7 +16,7 @@ RSpec.describe Milight::V6::Command do
     )
   end
 
-  subject { Milight::V6::Command.new(socket) }
+  subject { Milight::V6::Command.new(socket, wait: false) }
 
   describe "session" do
     it "sends the bridge session command" do
@@ -49,6 +49,34 @@ RSpec.describe Milight::V6::Command do
          0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02]
       )
       subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+    end
+
+    context 'when wait is disabled' do
+      subject { Milight::V6::Command.new(socket, wait: false) }
+
+      it "does not wait between sending commands" do
+        subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+        started = Time.now
+        subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        stopped = Time.now
+
+        expect(stopped - started).to be < 0.1
+      end
+    end
+
+    context 'when wait is defined' do
+      subject { Milight::V6::Command.new(socket, wait: 0.2) }
+
+      it "waits between sending commands" do
+        subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+        started = Time.now
+        subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        stopped = Time.now
+
+        expect(stopped - started).to be >= 0.2
+      end
     end
   end
 end

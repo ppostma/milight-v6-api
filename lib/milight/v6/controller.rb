@@ -12,9 +12,9 @@ module Milight
     class Controller
       extend Milight::V6::Discover
 
-      def initialize(host = "<broadcast>", port = 5987)
+      def initialize(host = "<broadcast>", port = 5987, wait: 0.1)
         @socket = Milight::V6::Socket.new(host, port)
-        @command = Milight::V6::Command.new(@socket)
+        @command = Milight::V6::Command.new(@socket, wait: wait)
       end
 
       # Select all zones.
