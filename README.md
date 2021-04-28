@@ -48,14 +48,24 @@ Some examples:
 ```ruby
 controller.zone(1).on
 
-controller.zone(2).warm_light.brightness(70).on
+controller.zone(2).on
+controller.zone(2).warm_light.brightness(70)
 
-controller.zone(3).hue(Milight::V6::Color::BLUE).saturation(10).on
+controller.zone(3).on
+controller.zone(3).hue(Milight::V6::Color::BLUE).saturation(10)
 
 controller.bridge.on
 controller.bridge.brightness(50)
 
 controller.all.off
+```
+
+The commands will be sent with an interval of 100ms, to prevent commands being dropped by the controller. You can change or disable this by setting the `wait` parameter when creating an instance of `Milight::V6::Controller`, for example:
+
+```ruby
+controller = Milight::V6::Controller.new("192.168.178.33", wait: false)  # don't delay commands
+
+controller = Milight::V6::Controller.new("192.168.178.33", wait: 0.05)   # delay commands for 50 ms
 ```
 
 ## Command line
