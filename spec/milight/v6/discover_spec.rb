@@ -6,7 +6,7 @@ RSpec.describe Milight::V6::Discover do
   subject { Class.new { extend Milight::V6::Discover } }
 
   describe "#search" do
-    let(:socket) { double(Milight::V6::Socket, host: "127.0.0.1", port: 5987) }
+    let(:socket) { instance_double(Milight::V6::Socket, host: "127.0.0.1", port: 5987) }
 
     before do
       allow(Milight::V6::Socket).to receive(:new).and_return(socket)

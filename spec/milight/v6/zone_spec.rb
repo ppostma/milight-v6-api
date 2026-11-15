@@ -3,9 +3,9 @@
 require "spec_helper"
 
 RSpec.describe Milight::V6::Zone do
-  let(:command) { double(Milight::V6::Command) }
+  subject { described_class.new(command, 1) }
 
-  subject { Milight::V6::Zone.new(command, 1) }
+  let(:command) { instance_double(Milight::V6::Command) }
 
   describe "#zone_id" do
     it "returns the zone ID" do

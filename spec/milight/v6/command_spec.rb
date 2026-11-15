@@ -3,7 +3,9 @@
 require "spec_helper"
 
 RSpec.describe Milight::V6::Command do
-  let(:socket) { double(Milight::V6::Socket, host: "127.0.0.1", port: 5987) }
+  subject { described_class.new(socket, wait: false) }
+
+  let(:socket) { instance_double(Milight::V6::Socket, host: "127.0.0.1", port: 5987) }
 
   before do
     allow(Milight::V6::Socket).to receive(:new).and_return(socket)
@@ -15,8 +17,6 @@ RSpec.describe Milight::V6::Command do
       ], "127.0.0.1"
     )
   end
-
-  subject { Milight::V6::Command.new(socket, wait: false) }
 
   describe "session" do
     it "sends the bridge session command" do
@@ -52,7 +52,7 @@ RSpec.describe Milight::V6::Command do
     end
 
     context 'when wait is disabled' do
-      subject { Milight::V6::Command.new(socket, wait: false) }
+      subject { described_class.new(socket, wait: false) }
 
       it "does not wait between sending commands" do
         subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
@@ -66,7 +66,7 @@ RSpec.describe Milight::V6::Command do
     end
 
     context 'when wait is defined' do
-      subject { Milight::V6::Command.new(socket, wait: 0.2) }
+      subject { described_class.new(socket, wait: 0.2) }
 
       it "waits between sending commands" do
         subject.execute(1, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])

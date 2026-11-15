@@ -3,9 +3,9 @@
 require "spec_helper"
 
 RSpec.describe Milight::V6::Bridge do
-  let(:command) { double(Milight::V6::Command) }
+  subject { described_class.new(command) }
 
-  subject { Milight::V6::Bridge.new(command) }
+  let(:command) { instance_double(Milight::V6::Command) }
 
   describe "#on" do
     it "sends a command to switch lights on" do
