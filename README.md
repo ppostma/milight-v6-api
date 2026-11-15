@@ -1,8 +1,8 @@
 # Milight Wifi Bridge v6 Ruby API
 
 [![Gem Version](https://badge.fury.io/rb/milight-v6.svg)](https://badge.fury.io/rb/milight-v6)
-[![Build Status](https://github.com/ppostma/milight-v6-api/actions/workflows/test.yml/badge.svg)](https://github.com/ppostma/milight-v6-api/actions)
-[![Code Climate](https://codeclimate.com/github/ppostma/milight-v6-api/badges/gpa.svg)](https://codeclimate.com/github/ppostma/milight-v6-api)
+[![CI](https://github.com/ppostma/milight-v6-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ppostma/milight-v6-api/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ppostma/milight-v6-api/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ppostma/milight-v6-api/actions/workflows/github-code-scanning/codeql)
 
 This gem provides a Ruby API for the Mi-Light Wifi Bridge using protocol version 6.
 
