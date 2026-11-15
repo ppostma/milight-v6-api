@@ -9,7 +9,7 @@ if host == "search"
   controllers = Milight::V6::Controller.search
 
   if !controllers.empty?
-    controllers.each { |c| puts c.to_s }
+    controllers.each { |controller| puts controller }
   else
     puts "No Mi-Light devices found."
   end

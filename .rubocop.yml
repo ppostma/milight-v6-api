@@ -1,16 +1,20 @@
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.2
+  NewCops: enable
   DisplayCopNames: true
   DisplayStyleGuide: true
   Exclude:
     - 'vendor/**/*'
 
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-
-Metrics/LineLength:
-  Enabled: false
 
 Metrics/MethodLength:
   Enabled: false
@@ -18,7 +22,10 @@ Metrics/MethodLength:
 Style/ConditionalAssignment:
   Enabled: false
 
-Style/For:
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/NegatedIfElseCondition:
   Enabled: false
 
 Style/StringLiterals:

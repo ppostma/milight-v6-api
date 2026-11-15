@@ -30,10 +30,9 @@ module Milight
 
         [bytes, address.last]
       rescue IO::WaitReadable
-        ready = IO.select([socket], nil, nil, READ_TIMEOUT)
-        retry if ready
+        retry if socket.wait_readable(READ_TIMEOUT)
 
-        return nil
+        nil
       end
 
       def close
@@ -56,7 +55,7 @@ module Milight
 
       def logger
         @logger ||= begin
-          logger = Logger.new(STDOUT)
+          logger = Logger.new($stdout)
           logger.level = Logger::INFO if ENV["MILIGHT_DEBUG"] != "1"
           logger
         end
