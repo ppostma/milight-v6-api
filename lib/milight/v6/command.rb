@@ -45,7 +45,7 @@ module Milight
         @socket.send_bytes(request)
         response, _address = @socket.receive_bytes
 
-        raise Exception, "Could not establish session with Wifi bridge." if response.nil?
+        raise Milight::V6::Exception, "Could not establish session with Wifi bridge." if response.nil?
 
         record_last_time
 
@@ -63,7 +63,7 @@ module Milight
       def calculate_checksum(bytes)
         checksum = 0
 
-        for i in 10..19 do
+        (10..19).each do |i|
           checksum += bytes[i]
         end
 

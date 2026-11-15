@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path("../lib", __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "milight/v6/version"
+require_relative "lib/milight/v6/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "milight-v6"
@@ -15,13 +13,19 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/ppostma/milight-v6-api"
   spec.license       = "MIT"
 
-  spec.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
-  end
+  spec.metadata      = { 'rubygems_mfa_required' => 'true' }
+
+  # Specify which files should be added to the gem when it is released.
+  spec.files         = Dir['LICENSE.txt', 'README.md', 'lib/**/*']
+
   spec.executables   = ["milight"]
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 2.0"
+  spec.required_ruby_version = '>= 3.2.0'
+
+  spec.add_dependency "logger"
+
+  spec.add_development_dependency "bundler", "~> 4.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 end
